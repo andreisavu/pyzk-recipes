@@ -134,7 +134,7 @@ class ZooKeeperQueue(object):
 
 if __name__ == '__main__':
   zk = ZooKeeperQueue("myfirstqueue")
-  print "Enqueuing 100 items"
+  print "Enqueuing 500 items"
   from threading import Thread
   for i in xrange(500):
     retry_on_loss(zk.enqueue)("queue item %d" % i)
@@ -146,10 +146,10 @@ if __name__ == '__main__':
       Thread.__init__(self)
 
     def run(self):
-      v = zk.dequeue()
+      v = retry_on_loss(zk.dequeue)()
       while v != None:
         print "Thread %d: %s" % (self.num, v)
-        v = zk.dequeue()
+        v = retry_on_loss(zk.dequeue)()
         time.sleep(0.1)
   
   print "Consuming all items in queue with 5 threads"
